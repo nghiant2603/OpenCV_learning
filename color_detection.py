@@ -2,10 +2,12 @@ import cv2
 import numpy as np
 import argparse
 
-select_range = ([0, 150, 0], [55, 255, 255])
 ap = argparse.ArgumentParser()
 ap.add_argument('-i', '--image', help='path to image')
 args = vars(ap.parse_args())
+
+# BGR
+select_range = ([0, 0, 0], [55, 255, 255])
 
 def color_detection (image, select_range): 
     i_img = cv2.imread(image)
