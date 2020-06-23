@@ -8,7 +8,7 @@ ap.add_argument('-i', '--image', help='path to image')
 args = vars(ap.parse_args())
 
 
-def shape_center (image, select_range): 
+def shape_center (image): 
     i_img = cv2.imread(image)
     gray_img = cv2.cvtColor(i_img, cv2.COLOR_BGR2GRAY)
     blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
