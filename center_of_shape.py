@@ -1,3 +1,6 @@
+### Function : detect contour and center of object
+### Option : 
+###     -i/--image : input image
 import cv2
 import numpy as np
 import argparse

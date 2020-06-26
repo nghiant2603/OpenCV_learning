@@ -1,3 +1,7 @@
+### Function : update target image by color style in source image
+### Option : 
+###     -s/--source : path of source image (style image)
+###     -t/--target : path of target image 
 import numpy as np 
 import cv2
 import argparse

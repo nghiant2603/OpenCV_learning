@@ -1,3 +1,6 @@
+### Function : detect objects with a specific image
+### Option : 
+###     -i/--image : path of input image
 import cv2
 import numpy as np
 import argparse
