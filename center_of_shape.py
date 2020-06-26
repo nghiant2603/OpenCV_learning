@@ -11,9 +11,9 @@ args = vars(ap.parse_args())
 
 def shape_center (image): 
     i_img = cv2.imread(image)
-    # increase constrast
-    alpha = 1.3
-    beta = 0
+
+    alpha = 1.3         # constrast : 1.0 -> 3.0
+    beta = 0            # brightness : 0 -> 100
     aj_img = cv2.convertScaleAbs(i_img, alpha = alpha, beta = beta)
     
     gray_img = cv2.cvtColor(aj_img, cv2.COLOR_BGR2GRAY)
