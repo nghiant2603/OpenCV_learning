@@ -31,6 +31,7 @@ def shape_of_color (image):
     cnts = imutils.grab_contours(cnts)
     for c in cnts:
         cv2.drawContours(o_img, [c], -1, (0,255,0), 2)
+        print (c.shape)
 
     cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
     cv2.imshow('window', np.hstack([i_img, o_img]))
