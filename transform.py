@@ -1,11 +1,11 @@
 import numpy as np
 import argparse
 import cv2
+import imutils
 
 #create input option
 ap = argparse.ArgumentParser()
 ap.add_argument('-i', '--image', help='path to image')
-ap.add_argument("-c", "--coords", help = "comma seperated list of source points")
 args = vars(ap.parse_args())
 
 def order_points(pts): 
@@ -53,12 +53,28 @@ def four_point_transform(image, pts):
     # return the warped image
     return warped
 
-def transform(image, coords): 
+def transform(image): 
     i_img = cv2.imread(image)
-    pts = np.array(eval(coords), dtype = "float32")
-    # apply the four point tranform to obtain a "birds eye view" of
-    # the image
-    o_img = four_point_transform(i_img, pts)
+
+    hsvImg = cv2.cvtColor(i_img,cv2.COLOR_BGR2HSV)
+    # decreasing the V channel by a factor from the original
+    hsvImg[...,2] = hsvImg[...,2]*0.6
+    i_img = cv2.cvtColor(hsvImg,cv2.COLOR_HSV2RGB)
+
+    gray_img = cv2.cvtColor(i_img, cv2.COLOR_BGR2GRAY)
+    blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
+    thresh_img = cv2.threshold(blur_img, 100, 255, cv2.THRESH_BINARY)[1]
+    cnts = cv2.findContours(thresh_img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = imutils.grab_contours(cnts)
+
+    for c in cnts:
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.04 * peri, True)
+        if (len(approx) == 4) : 
+            cv2.drawContours(i_img, [c], -1, (0,255,0), 2)
+            # apply the four point tranform to obtain a "birds eye view" of
+            # the image
+            o_img = four_point_transform(i_img, approx.reshape(4,2))
 
     #cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
     cv2.imshow('window', i_img)
@@ -67,4 +83,4 @@ def transform(image, coords):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    transform(args['image'], args['coords'])
+    transform(args['image'])

@@ -14,11 +14,16 @@ args = vars(ap.parse_args())
 def shape_detector (image): 
     i_img = cv2.imread(image)
 
-    alpha = 1.3         # constrast : 1.0 -> 3.0
+    hsvImg = cv2.cvtColor(i_img,cv2.COLOR_BGR2HSV)
+    # decreasing the V channel by a factor from the original
+    hsvImg[...,2] = hsvImg[...,2]*0.6
+    i_img = cv2.cvtColor(hsvImg,cv2.COLOR_HSV2RGB)
+
+    alpha = 2         # constrast : 1.0 -> 3.0
     beta = 0            # brightness : 0 -> 100
     aj_img = cv2.convertScaleAbs(i_img, alpha = alpha, beta = beta)
     
-    gray_img = cv2.cvtColor(aj_img, cv2.COLOR_BGR2GRAY)
+    gray_img = cv2.cvtColor(i_img, cv2.COLOR_BGR2GRAY)
     #Blur image to reduce mistake
     blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
     thresh_img = cv2.threshold(blur_img, 100, 255, cv2.THRESH_BINARY)[1]
@@ -39,7 +44,7 @@ def shape_detector (image):
             cv2.putText(i_img, str(len(approx)), (cX - 20, cY - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
     cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
-    cv2.imshow('window', np.hstack([i_img, aj_img]))
+    cv2.imshow('window', np.hstack([i_img, o_img]))
     #cv2.imshow('window', i_img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
