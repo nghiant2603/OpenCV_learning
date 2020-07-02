@@ -74,7 +74,7 @@ def shape_position_corrector(image):
         peri = cv2.arcLength(c, True)
         approx = cv2.approxPolyDP(c, 0.04 * peri, True)
         if (len(approx) == 4) : 
-            cv2.drawContours(i_img, [c], -1, (0,255,0), 2)
+            #cv2.drawContours(i_img, [c], -1, (0,255,0), 2)
             # apply the four point tranform to obtain a "birds eye view" of
             # the image
             o_img = four_point_transform(i_img, approx.reshape(4,2))

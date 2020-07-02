@@ -47,10 +47,11 @@ def sort_contour (image, method = 'XA'):    # XA : sort X_axis Ascending , XD : 
         x,y,w,h = cv2.boundingRect(c)
         cv2.rectangle(o_img, (x, y), (x+w, y + h), (255, 255, 255), 1)
         M = cv2.moments(c)
-        cX = int(M["m10"] / M["m00"])
-        cY = int(M["m01"] / M["m00"])
-        # draw the countour number on the image
-        cv2.putText(o_img, "#{}".format(i + 1), (cX - 20, cY), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+        if (M["m00"] != 0) : 
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
+            # draw the countour number on the image
+            cv2.putText(o_img, "#{}".format(i + 1), (cX - 20, cY), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
         i = i + 1
 
     cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
