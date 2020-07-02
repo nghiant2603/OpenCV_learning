@@ -50,13 +50,13 @@ def four_point_transform(image, pts):
     	[maxWidth - 1, 0],
     	[maxWidth - 1, maxHeight - 1],
     	[0, maxHeight - 1]], dtype = "float32")
-    # compute the perspective shape_position_correction matrix and then apply it
+    # compute the perspective shape_position_corrector matrix and then apply it
     M = cv2.getPerspectiveTransform(rect, dst)
     warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
     # return the warped image
     return warped
 
-def shape_position_correction(image): 
+def shape_position_corrector(image): 
     i_img = cv2.imread(image)
 
     hsvImg = cv2.cvtColor(i_img,cv2.COLOR_BGR2HSV)
@@ -86,4 +86,4 @@ def shape_position_correction(image):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    shape_position_correction(args['image'])
+    shape_position_corrector(args['image'])
