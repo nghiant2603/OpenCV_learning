@@ -1,4 +1,4 @@
-### Function : detect the color of shape 
+### Function : label the color of shape 
 ### Option : 
 ###     -i/--image : input image
 import cv2
@@ -13,7 +13,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('-i', '--image', help='path to image')
 args = vars(ap.parse_args())
 
-def shape_color_detector (image): 
+def color_label (image): 
     # create color dictionary
     colors = OrderedDict({'red':(255, 0, 0), 'green':(0, 255, 0), 'blue':(0, 0, 255), 'yellow':(255, 255, 0), 'orange':(255, 150, 0)}) 
     lab = np.zeros((len(colors), 1, 3), dtype="uint8")
@@ -65,4 +65,4 @@ def shape_color_detector (image):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    shape_color_detector(args['image'])
+    color_label(args['image'])

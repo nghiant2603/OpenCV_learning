@@ -1,4 +1,4 @@
-### Function : detect objects with a specific image
+### Function : filter a specific color
 ### Option : 
 ###     -i/--image : path of input image
 import cv2
@@ -12,7 +12,7 @@ args = vars(ap.parse_args())
 # BGR
 select_range = ([0, 0, 0], [55, 255, 255])
 
-def color_detection (image, select_range): 
+def color_filter (image, select_range): 
     i_img = cv2.imread(image)
 
     o_img = np.zeros(i_img.shape)
@@ -28,4 +28,4 @@ def color_detection (image, select_range):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    color_detection(args['image'], select_range)
+    color_filter(args['image'], select_range)

@@ -12,7 +12,7 @@ ap.add_argument('-i', '--image', help='path to image')
 args = vars(ap.parse_args())
 
 
-def shape_of_color (image): 
+def color_shape_detector (image): 
     i_img = cv2.imread(image)
     o_img = i_img.copy()
 
@@ -39,4 +39,4 @@ def shape_of_color (image):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    shape_of_color(args['image'])
+    color_shape_detector(args['image'])

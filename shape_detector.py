@@ -1,4 +1,4 @@
-### Function : detect the shape of contour
+### Function : detect the shape of contour base on its conner
 ### Option : 
 ###     -i/--image : input image
 import cv2
