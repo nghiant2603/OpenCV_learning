@@ -5,6 +5,8 @@ import numpy as np
 import argparse
 import cv2
 import imutils
+from display import *
+from sort_contour import *
 
 #create input option
 ap = argparse.ArgumentParser()
@@ -56,15 +58,14 @@ def four_point_transform(image, pts):
     # return the warped image
     return warped
 
-def shape_position_corrector(image): 
-    i_img = cv2.imread(image)
+def shape_position_corrector(frame): 
 
-    hsvImg = cv2.cvtColor(i_img,cv2.COLOR_BGR2HSV)
+    hsvImg = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
     # decreasing the V channel by a factor from the original
     hsvImg[...,2] = hsvImg[...,2]*0.6
-    i_img = cv2.cvtColor(hsvImg,cv2.COLOR_HSV2RGB)
+    frame = cv2.cvtColor(hsvImg,cv2.COLOR_HSV2RGB)
 
-    gray_img = cv2.cvtColor(i_img, cv2.COLOR_BGR2GRAY)
+    gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
     thresh_img = cv2.threshold(blur_img, 100, 255, cv2.THRESH_BINARY)[1]
     cnts = cv2.findContours(thresh_img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -74,16 +75,16 @@ def shape_position_corrector(image):
         peri = cv2.arcLength(c, True)
         approx = cv2.approxPolyDP(c, 0.04 * peri, True)
         if (len(approx) == 4) : 
-            #cv2.drawContours(i_img, [c], -1, (0,255,0), 2)
+            #cv2.drawContours(frame, [c], -1, (0,255,0), 2)
             # apply the four point tranform to obtain a "birds eye view" of
             # the image
-            o_img = four_point_transform(i_img, approx.reshape(4,2))
+            o_frame = four_point_transform(frame, approx.reshape(4,2))
+    return o_frame
 
-    #cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
-    cv2.imshow('window', i_img)
-    cv2.imshow('new', o_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+def run (image):
+    frame = cv2.imread(image)
+    frame = shape_position_corrector(frame) 
+    display(frame)
 
 if __name__ == "__main__":
-    shape_position_corrector(args['image'])
+    run(args['image'])

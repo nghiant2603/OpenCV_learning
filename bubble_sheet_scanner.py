@@ -6,18 +6,24 @@ import numpy as np
 import argparse
 import cv2
 import imutils
+from shape_position_corrector import *
+from display import *
 
 #create input option
 ap = argparse.ArgumentParser()
 ap.add_argument('-i', '--image', help='path to image')
 args = vars(ap.parse_args())
 
-def bubble_sheet_scanner (image) : 
-    i_img = cv2.imread(image)
+def bubble_sheet_scanner (frame) : 
+    o_frame = frame.copy()
+    o_frame = shape_position_corrector(frame)
+    o_frame = sort_contour(o_frame, method = 'XA')
+    return o_frame
 
-    cv2.imshow('window', i_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+def run (image):
+    frame = cv2.imread(image)
+    frame = bubble_sheet_scanner(frame)
+    display(frame)
 
 if __name__ == "__main__":
-    bubble_sheet_scanner(args['image'])
+    run(args['image'])
