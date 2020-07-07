@@ -7,6 +7,7 @@ import argparse
 import cv2
 import imutils
 from shape_position_corrector import *
+from sort_contour import *
 from display import *
 
 #create input option
@@ -17,7 +18,7 @@ args = vars(ap.parse_args())
 def bubble_sheet_scanner (frame) : 
     o_frame = frame.copy()
     o_frame = shape_position_corrector(frame)
-    o_frame = sort_contour(o_frame, method = 'XA')
+    o_frame = sort_contour(o_frame, method = 'YA')
     return o_frame
 
 def run (image):

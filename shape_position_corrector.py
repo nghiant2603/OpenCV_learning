@@ -59,7 +59,7 @@ def four_point_transform(image, pts):
     return warped
 
 def shape_position_corrector(frame): 
-
+    o_frame = frame.copy()
     hsvImg = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
     # decreasing the V channel by a factor from the original
     hsvImg[...,2] = hsvImg[...,2]*0.6
@@ -78,7 +78,7 @@ def shape_position_corrector(frame):
             #cv2.drawContours(frame, [c], -1, (0,255,0), 2)
             # apply the four point tranform to obtain a "birds eye view" of
             # the image
-            o_frame = four_point_transform(frame, approx.reshape(4,2))
+            o_frame = four_point_transform(o_frame, approx.reshape(4,2))
     return o_frame
 
 def run (image):
