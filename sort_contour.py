@@ -62,7 +62,6 @@ def sort_contour (frame, method = 'XA', dark_mode=True, min_area=10, max_area = 
                     #draw the countour number on the image
                     cv2.putText(o_frame, "#{}".format(i + 1), (cX - 10, cY), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
                 i = i + 1
-                print (i, "-", area)
     return o_frame
 
 def run (image):

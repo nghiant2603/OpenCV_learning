@@ -6,7 +6,7 @@ import argparse
 import cv2
 import imutils
 from display import *
-from sort_contour import *
+from preprocess_image import *
 
 #create input option
 ap = argparse.ArgumentParser()
@@ -58,16 +58,21 @@ def four_point_transform(image, pts):
     # return the warped image
     return warped
 
-def shape_position_corrector(frame): 
+def shape_position_corrector(frame, dark_mode = True): 
     o_frame = frame.copy()
-    hsvImg = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-    # decreasing the V channel by a factor from the original
-    hsvImg[...,2] = hsvImg[...,2]*0.6
-    frame = cv2.cvtColor(hsvImg,cv2.COLOR_HSV2RGB)
+
+    # reduce highlight 
+    #hsvImg = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+    #hsvImg[...,2] = hsvImg[...,2]*0.6
+    #frame = cv2.cvtColor(hsvImg,cv2.COLOR_HSV2RGB)
+    frame = preprocess_image(frame)
 
     gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
-    thresh_img = cv2.threshold(blur_img, 100, 255, cv2.THRESH_BINARY)[1]
+    if dark_mode : 
+        thresh_img = cv2.threshold(blur_img, 150, 255, cv2.THRESH_BINARY)[1]
+    else : 
+        thresh_img = cv2.threshold(blur_img, 100, 255, cv2.THRESH_BINARY)[1]
     cnts = cv2.findContours(thresh_img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
 
@@ -75,7 +80,6 @@ def shape_position_corrector(frame):
         peri = cv2.arcLength(c, True)
         approx = cv2.approxPolyDP(c, 0.04 * peri, True)
         if (len(approx) == 4) : 
-            #cv2.drawContours(frame, [c], -1, (0,255,0), 2)
             # apply the four point tranform to obtain a "birds eye view" of
             # the image
             o_frame = four_point_transform(o_frame, approx.reshape(4,2))

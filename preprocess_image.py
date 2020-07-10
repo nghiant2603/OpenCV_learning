@@ -29,7 +29,7 @@ def preprocess_image(frame):
 
     lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB).astype('float32')
     (l,a,b) = cv2.split(lab)
-    l = l - l.mean() + 128
+    l = l - l.mean() + 120
     l = np.clip(l, 0, 255)
     frame = cv2.cvtColor(cv2.merge([l, a, b]).astype('uint8'), cv2.COLOR_LAB2BGR)
 
