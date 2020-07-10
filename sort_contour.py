@@ -13,7 +13,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('-i', '--image', help='path to image')
 args = vars(ap.parse_args())
 
-def sort_contour (frame, method = 'XA', dark_mode=True):    # XA : sort X_axis Ascending , XD : sort x_axis Descending, YA, YD    if (method == 'LT') : 
+def sort_contour (frame, method = 'XA', dark_mode=True, min_area=10, max_area = 1000000):    # XA : sort X_axis Ascending , XD : sort x_axis Descending, YA, YD    if (method == 'LT') : 
     if (method == 'XA') :
         y_axis = 0          # 0 : sort x_axis - 1 : sort y_axis
         reverse = False     # False : ascending - True : descending
@@ -34,9 +34,9 @@ def sort_contour (frame, method = 'XA', dark_mode=True):    # XA : sort X_axis A
     blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
 
     if dark_mode :
-        thresh_img = cv2.threshold(blur_img, 130, 255, cv2.THRESH_BINARY)[1]
+        thresh_img = cv2.threshold(blur_img, 150, 255, cv2.THRESH_BINARY)[1]
     else : 
-        thresh_img = ~cv2.threshold(blur_img, 130, 255, cv2.THRESH_BINARY)[1]
+        thresh_img = ~cv2.threshold(blur_img, 100, 255, cv2.THRESH_BINARY)[1]
 
     cnts = cv2.findContours(thresh_img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
@@ -46,7 +46,8 @@ def sort_contour (frame, method = 'XA', dark_mode=True):    # XA : sort X_axis A
 
     i = 0
     for c in cnts : 
-        if (cv2.contourArea(c) > 800) : 
+        area = cv2.contourArea(c) 
+        if (area > min_area) and (area < max_area) : 
             mask = np.zeros(thresh_img.shape,np.uint8)
             cv2.drawContours(mask,[c],0,255,-1)
             mean = cv2.mean(thresh_img, mask = mask)
@@ -61,6 +62,7 @@ def sort_contour (frame, method = 'XA', dark_mode=True):    # XA : sort X_axis A
                     #draw the countour number on the image
                     cv2.putText(o_frame, "#{}".format(i + 1), (cX - 10, cY), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
                 i = i + 1
+                print (i, "-", area)
     return o_frame
 
 def run (image):
