@@ -7,9 +7,14 @@ import argparse
 import imutils
 from preprocess_image import *
 from display import *
+from scipy.spatial import distance as dist
 
-def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100)): 
+def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100), color_point=[255, 0, 0], color_range=60): 
     o_frame = frame.copy()
+    lab_frame = cv2.cvtColor(o_frame, cv2.COLOR_BGR2LAB)
+
+    color = np.array(color_point).reshape(1, 1, 3).astype("uint8")
+    color_lab = cv2.cvtColor(color, cv2.COLOR_BGR2LAB)
 
     frame = preprocess_image(frame) 
 
@@ -25,7 +30,15 @@ def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100)):
 
     size = frame.shape
     full_area = size[0]*size[1]
+    i = 0
     for c in cnts:
+        mask = np.zeros(lab_frame.shape[:2], dtype="uint8")
+        cv2.drawContours(mask, [c], -1, 255, -1)
+        mask = cv2.erode(mask, None, iterations=2)
+        mean = cv2.mean(lab_frame, mask=mask)[:3]
+        d = dist.euclidean(color_lab, mean)
+        print(i, " -- ", d)
+        
         peri = cv2.arcLength(c, True)
         points = cv2.approxPolyDP(c, 0.04 * peri, True)
         n_point = len(points)
@@ -39,7 +52,8 @@ def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100)):
                     cY = int(M["m01"]/M["m00"])
                     cv2.drawContours(o_frame, [c], -1, (0,255,0), 2)
                     cv2.circle(o_frame, (cX, cY), 3, (255, 255, 255), -1)
-                    cv2.putText(o_frame, str(int(area)), (cX - 5, cY - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+                    cv2.putText(o_frame, str(i), (cX - 5, cY - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        i += 1
     return o_frame
 
 def run (image):
@@ -49,7 +63,7 @@ def run (image):
     args = vars(ap.parse_args())
 
     frame = cv2.imread(image)
-    frame = shape_detector(frame, dark_mode=True, n_points=(0,100), areas=(0, 5)) 
+    frame = shape_detector(frame, dark_mode=True, n_points=(0,100), areas=(0, 5), color_point=[255, 0, 0]) 
     display(frame)
 
 if __name__ == "__main__":
