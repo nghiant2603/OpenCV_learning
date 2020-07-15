@@ -10,12 +10,12 @@ from display import *
 from scipy.spatial import distance as dist
 
 def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100),color_point=[0, 0, 0], color_range=255): 
-    """Function : detect the shape base on contour, its angle, area and color\
-        dark_mode : True : True when the image background is darker than object\
-        n_points : (0, 1000) : min/max corner of detecting object\
-        areas : (0, 100) : the area of detecting object, in percentage of full image\
-        color_point : [B, G, R] : the center color of detecting object\
-        color_range : 255 : tolerance in euclidean distance, use with color_point """
+    """Function : detect the shape base on contour, its angle, area and color\n\
+        \t\t- dark_mode : True : True when the image background is darker than object\n\
+        \t\t- n_points : (0, 1000) : min/max corner of detecting object\n\
+        \t\t- areas : (0, 100) : the area of detecting object, in percentage of full image\n\
+        \t\t- color_point : [B, G, R] : the center color of detecting object\n\
+        \t\t- color_range : 255 : tolerance in euclidean distance, use with color_point """
     o_frame = frame.copy()
     lab_frame = cv2.cvtColor(o_frame, cv2.COLOR_BGR2LAB)
 
