@@ -1,4 +1,4 @@
-### Function : detect the shape of contour base on its conner
+### Function : detect the shape base on contour, its angle, area and color
 ### Option : 
 ###     -i/--image : input image
 import cv2
@@ -9,7 +9,13 @@ from preprocess_image import *
 from display import *
 from scipy.spatial import distance as dist
 
-def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100), color_point=[255, 0, 0], color_range=60): 
+def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100),color_point=[0, 0, 0], color_range=255): 
+    """Function : detect the shape base on contour, its angle, area and color\
+        dark_mode : True : True when the image background is darker than object\
+        n_points : (0, 1000) : min/max corner of detecting object\
+        areas : (0, 100) : the area of detecting object, in percentage of full image\
+        color_point : [B, G, R] : the center color of detecting object\
+        color_range : 255 : tolerance in euclidean distance, use with color_point """
     o_frame = frame.copy()
     lab_frame = cv2.cvtColor(o_frame, cv2.COLOR_BGR2LAB)
 
@@ -52,7 +58,7 @@ def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100), c
                         cY = int(M["m01"]/M["m00"])
                         cv2.drawContours(o_frame, [c], -1, (0,255,0), 2)
                         cv2.circle(o_frame, (cX, cY), 3, (255, 255, 255), -1)
-                        cv2.putText(o_frame, str(int(d)), (cX - 5, cY - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+                        cv2.putText(o_frame, str(i), (cX - 5, cY - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
         i += 1
     return o_frame
 
@@ -63,7 +69,7 @@ def run (image):
     args = vars(ap.parse_args())
 
     frame = cv2.imread(image)
-    frame = shape_detector(frame, dark_mode=True, n_points=(0,100), areas=(0, 5), color_point=[102, 158, 255], color_range=50) 
+    frame = shape_detector(frame, dark_mode=True, n_points=(0,100), areas=(0, 5)) 
     display(frame)
 
 if __name__ == "__main__":
