@@ -21,7 +21,7 @@ def preprocess_image(frame):
 
     # reduce highlight 
     #hsvImg = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-    #hsvImg[...,2] = hsvImg[...,2]*0.8
+    #hsvImg[...,2] = hsvImg[...,2]*0.5
     #frame = cv2.cvtColor(hsvImg,cv2.COLOR_HSV2BGR)
 
     #kernel = np.ones((5,5),np.uint8)

@@ -9,7 +9,7 @@ from preprocess_image import *
 from display import *
 from scipy.spatial import distance as dist
 
-def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100),color_point=[0, 0, 0], color_range=255): 
+def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100),color_point=[0, 0, 0], color_range=1000): 
     """Function : detect the shape base on contour, its angle, area and color\n\
         \t\t- dark_mode : True : True when the image background is darker than object\n\
         \t\t- n_points : (0, 1000) : min/max corner of detecting object\n\
@@ -24,12 +24,20 @@ def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100),co
 
     frame = preprocess_image(frame) 
 
-    gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
+    #gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    #blur_img = cv2.GaussianBlur(frame, (5, 5), 0)
     if dark_mode : 
-        thresh_img = cv2.threshold(blur_img, 150, 255, cv2.THRESH_BINARY)[1]
+        thresh_b_img = cv2.threshold(frame[:,:,0], 150, 255, cv2.THRESH_BINARY)[1]
+        thresh_g_img = cv2.threshold(frame[:,:,1], 150, 255, cv2.THRESH_BINARY)[1]
+        thresh_r_img = cv2.threshold(frame[:,:,2], 150, 255, cv2.THRESH_BINARY)[1]
+        thresh_bg_img = cv2.bitwise_or(thresh_b_img, thresh_g_img)
+        thresh_img = cv2.bitwise_or(thresh_bg_img, thresh_r_img)
     else : 
-        thresh_img = ~cv2.threshold(blur_img, 100, 255, cv2.THRESH_BINARY)[1]
+        thresh_b_img = ~cv2.threshold(frame[:,:,0], 100, 255, cv2.THRESH_BINARY)[1]
+        thresh_g_img = ~cv2.threshold(frame[:,:,1], 100, 255, cv2.THRESH_BINARY)[1]
+        thresh_r_img = ~cv2.threshold(frame[:,:,2], 100, 255, cv2.THRESH_BINARY)[1]
+        thresh_bg_img = cv2.bitwise_or(thresh_b_img, thresh_g_img)
+        thresh_img = cv2.bitwise_or(thresh_bg_img, thresh_r_img)
 
     cnts = cv2.findContours(thresh_img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
@@ -57,8 +65,8 @@ def shape_detector (frame, dark_mode=True, n_points=(0, 1000), areas=(0, 100),co
                         cX = int(M["m10"]/M["m00"])
                         cY = int(M["m01"]/M["m00"])
                         cv2.drawContours(o_frame, [c], -1, (0,255,0), 2)
-                        cv2.circle(o_frame, (cX, cY), 3, (255, 255, 255), -1)
-                        cv2.putText(o_frame, str(i), (cX - 5, cY - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+                        cv2.circle(o_frame, (cX, cY), 5, (0, 0, 0), -1)
+                        cv2.putText(o_frame, str(i), (cX - 5, cY - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
         i += 1
     return o_frame
 
@@ -69,7 +77,7 @@ def run (image):
     args = vars(ap.parse_args())
 
     frame = cv2.imread(image)
-    frame = shape_detector(frame, dark_mode=True, n_points=(0,100), areas=(0, 5)) 
+    frame = shape_detector(frame, dark_mode=True, areas=(1,100)) 
     display(frame)
 
 if __name__ == "__main__":
