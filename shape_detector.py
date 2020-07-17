@@ -9,12 +9,12 @@ from preprocess_image import *
 from display import *
 from scipy.spatial import distance as dist
 
-def shape_detector (frame, dark_mode=True, n_points=(0, 1000), perimeter = (0, np.inf), areas=(0, np.inf),color_point=[0, 0, 0], color_range=np.inf): 
+def shape_detector (frame, dark_mode=True, n_points=(0, 1000), perimeters = (0, np.inf), areas=(0, np.inf),color_point=[0, 0, 0], color_range=np.inf): 
     """Function : detect the shape base on contour, its angle, area and color\n\
         \t\t- dark_mode : True : True when the image background is darker than object\n\
         \t\t- n_points : (0, np.inf) : min/max corner of detecting object\n\
         \t\t- areas : (0, np.inf) : the area of detecting object, in percentage of full image\n\
-        \t\t- perimeter : (0, np.inf) : the perimeter of detecting object\n\
+        \t\t- perimeters : (0, np.inf) : the perimeter of detecting object\n\
         \t\t- color_point : [B, G, R] : the center color of detecting object\n\
         \t\t- color_range : np.inf : tolerance in euclidean distance, use with color_point """
     o_frame = frame.copy()
@@ -27,7 +27,7 @@ def shape_detector (frame, dark_mode=True, n_points=(0, 1000), perimeter = (0, n
     #edge_thresh = cv2.Canny(frame, 150, 255)
     #edge_img = cv2.cvtColor(edge_thresh, cv2.COLOR_GRAY2BGR)
     #gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    #blur_img = cv2.GaussianBlur(edge_img, (5, 5), 0)
+    #frame = cv2.GaussianBlur(frame, (5, 5), 0)
     if dark_mode : 
         thresh_b_img = cv2.threshold(frame[:,:,0], 150, 255, cv2.THRESH_BINARY)[1]
         thresh_g_img = cv2.threshold(frame[:,:,1], 150, 255, cv2.THRESH_BINARY)[1]
@@ -80,7 +80,7 @@ def run (image):
     args = vars(ap.parse_args())
 
     frame = cv2.imread(image)
-    frame = shape_detector(frame, dark_mode=True, perimeter=(0, np.inf)) 
+    frame = shape_detector(frame, dark_mode=True, areas=(1, 5)) 
     display(frame)
 
 if __name__ == "__main__":
