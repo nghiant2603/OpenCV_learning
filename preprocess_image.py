@@ -45,7 +45,7 @@ def preprocess_image(frame):
 def run (image):
     frame = cv2.imread(image)
     frame = preprocess_image(frame)
-    display(frame)
+    display([[frame]])
 
 if __name__ == "__main__":
     run(args['image'])

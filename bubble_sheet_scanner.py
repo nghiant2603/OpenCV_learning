@@ -6,8 +6,8 @@ import numpy as np
 import argparse
 import cv2
 import imutils
-from shape_position_corrector import *
-from sort_contour import *
+from shape_position_corrector import shape_position_corrector
+from sort_contour import sort_contour
 from display import *
 
 #create input option
@@ -24,7 +24,7 @@ def bubble_sheet_scanner (frame) :
 def run (image):
     frame = cv2.imread(image)
     frame = bubble_sheet_scanner(frame)
-    display(frame)
+    display([[frame]])
 
 if __name__ == "__main__":
     run(args['image'])

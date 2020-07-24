@@ -88,7 +88,7 @@ def shape_position_corrector(frame, dark_mode = True):
 def run (image):
     frame = cv2.imread(image)
     frame = shape_position_corrector(frame) 
-    display(frame)
+    display([[frame]])
 
 if __name__ == "__main__":
     run(args['image'])

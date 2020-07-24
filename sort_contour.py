@@ -67,7 +67,7 @@ def sort_contour (frame, method = 'XA', dark_mode=True, min_area=10, max_area = 
 def run (image):
     frame = cv2.imread(image)
     frame = sort_contour(frame, method = 'XA') 
-    display(frame)
+    display([[frame]])
 
 if __name__ == "__main__":
     run(args['image'])

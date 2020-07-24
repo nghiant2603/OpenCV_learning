@@ -81,7 +81,7 @@ def run (image):
 
     frame = cv2.imread(image)
     frame = shape_detector(frame, dark_mode=True, areas=(1, 5)) 
-    display(frame)
+    display([[frame]])
 
 if __name__ == "__main__":
     run(args['image'])
