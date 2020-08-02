@@ -10,11 +10,6 @@ from shape_position_corrector import shape_position_corrector
 from sort_contour import sort_contour
 from display import *
 
-#create input option
-ap = argparse.ArgumentParser()
-ap.add_argument('-i', '--image', help='path to image')
-args = vars(ap.parse_args())
-
 def bubble_sheet_scanner (frame) : 
     o_frame = frame.copy()
     o_frame = shape_position_corrector(frame)
@@ -27,4 +22,9 @@ def run (image):
     display([[frame]])
 
 if __name__ == "__main__":
+    #create input option
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-i', '--image', help='path to image')
+    args = vars(ap.parse_args())
+
     run(args['image'])

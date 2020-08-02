@@ -63,7 +63,7 @@ def shape_detector (frame, dark_mode=True, n_points=(0, 1000), perimeters = (0, 
         if (d <= color_range) : 
             if ((n_point >= n_points[0]) and (n_point < n_points[1])) : 
                 if ((area >= areas[0]) and (area < areas[1])) : 
-                    if (c.shape[0] >= perimeter[0]) and (c.shape[0] < perimeter[1]) : 
+                    if (c.shape[0] >= perimeters[0]) and (c.shape[0] < perimeters[1]) : 
                         M = cv2.moments(c)
                         if (M["m00"] != 0) : 
                             cX = int(M["m10"]/M["m00"])
@@ -74,14 +74,14 @@ def shape_detector (frame, dark_mode=True, n_points=(0, 1000), perimeters = (0, 
     return o_frame
 
 def run (image):
+    frame = cv2.imread(image)
+    frame = shape_detector(frame) 
+    display([[frame]])
+
+if __name__ == "__main__":
     #create input option
     ap = argparse.ArgumentParser()
     ap.add_argument('-i', '--image', help='path to image')
     args = vars(ap.parse_args())
 
-    frame = cv2.imread(image)
-    frame = shape_detector(frame, dark_mode=True, areas=(1, 5)) 
-    display([[frame]])
-
-if __name__ == "__main__":
     run(args['image'])

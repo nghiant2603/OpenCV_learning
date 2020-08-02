@@ -8,10 +8,6 @@ import imutils
 import matplotlib.pyplot as plt
 from display import *
 
-#create input option
-ap = argparse.ArgumentParser()
-ap.add_argument('-i', '--image', help='path to image')
-args = vars(ap.parse_args())
 def preprocess_image(frame):
 
     # Increase constrast
@@ -48,4 +44,8 @@ def run (image):
     display([[frame]])
 
 if __name__ == "__main__":
+    #create input option
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-i', '--image', help='path to image')
+    args = vars(ap.parse_args())
     run(args['image'])

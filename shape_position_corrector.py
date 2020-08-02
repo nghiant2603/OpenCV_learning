@@ -8,11 +8,6 @@ import imutils
 from display import *
 from preprocess_image import *
 
-#create input option
-ap = argparse.ArgumentParser()
-ap.add_argument('-i', '--image', help='path to image')
-args = vars(ap.parse_args())
-
 def order_points(pts): 
     rect = np.zeros((4,2), dtype='float32')
     s = pts.sum(axis=1)
@@ -58,7 +53,7 @@ def four_point_transform(image, pts):
     # return the warped image
     return warped
 
-def shape_position_corrector(frame, dark_mode = True): 
+def shape_position_corrector(frame, thresh_hold = 150, dark_mode = True): 
     o_frame = frame.copy()
 
     # reduce highlight 
@@ -67,12 +62,18 @@ def shape_position_corrector(frame, dark_mode = True):
     #frame = cv2.cvtColor(hsvImg,cv2.COLOR_HSV2RGB)
     frame = preprocess_image(frame)
 
-    gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
     if dark_mode : 
-        thresh_img = cv2.threshold(blur_img, 150, 255, cv2.THRESH_BINARY)[1]
+        thresh_b_img = cv2.threshold(frame[:,:,0], thresh_hold, 255, cv2.THRESH_BINARY)[1]
+        thresh_g_img = cv2.threshold(frame[:,:,1], thresh_hold, 255, cv2.THRESH_BINARY)[1]
+        thresh_r_img = cv2.threshold(frame[:,:,2], thresh_hold, 255, cv2.THRESH_BINARY)[1]
+        thresh_bg_img = cv2.bitwise_or(thresh_b_img, thresh_g_img)
+        thresh_img = cv2.bitwise_or(thresh_bg_img, thresh_r_img)
     else : 
-        thresh_img = cv2.threshold(blur_img, 100, 255, cv2.THRESH_BINARY)[1]
+        thresh_b_img = ~cv2.threshold(frame[:,:,0], thresh_hold-50, 255, cv2.THRESH_BINARY)[1]
+        thresh_g_img = ~cv2.threshold(frame[:,:,1], thresh_hold-50, 255, cv2.THRESH_BINARY)[1]
+        thresh_r_img = ~cv2.threshold(frame[:,:,2], thresh_hold-50, 255, cv2.THRESH_BINARY)[1]
+        thresh_bg_img = cv2.bitwise_or(thresh_b_img, thresh_g_img)
+        thresh_img = cv2.bitwise_or(thresh_bg_img, thresh_r_img)
     cnts = cv2.findContours(thresh_img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
 
@@ -91,4 +92,8 @@ def run (image):
     display([[frame]])
 
 if __name__ == "__main__":
+    #create input option
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-i', '--image', help='path to image')
+    args = vars(ap.parse_args())
     run(args['image'])

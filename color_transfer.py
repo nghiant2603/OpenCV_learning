@@ -5,15 +5,11 @@
 import numpy as np 
 import cv2
 import argparse
+from display import *
 
-ap = argparse.ArgumentParser()
-ap.add_argument('-s', '--source', help='path to source image')
-ap.add_argument('-t', '--target', help='path to target image')
-args = vars(ap.parse_args())
-
-def image_transfer (input_img, target_img) : 
-    source = cv2.cvtColor(cv2.imread(input_img), cv2.COLOR_BGR2LAB).astype('float32')
-    target = cv2.cvtColor(cv2.imread(target_img), cv2.COLOR_BGR2LAB).astype('float32')
+def image_transfer (s_img, t_img) : 
+    source = cv2.cvtColor(s_img, cv2.COLOR_BGR2LAB).astype('float32')
+    target = cv2.cvtColor(t_img, cv2.COLOR_BGR2LAB).astype('float32')
     
     (tl, ta, tb) = cv2.split(target)
     (sl, sa, sb) = cv2.split(source)
@@ -40,10 +36,19 @@ def image_transfer (input_img, target_img) :
 
     o_img = cv2.cvtColor(cv2.merge([l, a, b]).astype('uint8'), cv2.COLOR_LAB2BGR)
 
-    cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
-    cv2.imshow('window', o_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    return o_img
+
+def run (s_image, t_image):
+    s_frame = cv2.imread(s_image)
+    t_frame = cv2.imread(t_image)
+    o_frame = image_transfer(s_frame, t_frame) 
+    display([[s_frame, t_frame], [o_frame]])
 
 if __name__ == "__main__":
-    image_transfer(args['source'], args['target']) 
+    #create input option
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-s', '--source', help='path to source image')
+    ap.add_argument('-t', '--target', help='path to target image')
+    args = vars(ap.parse_args())
+
+    run(args['source'], args['target']) 

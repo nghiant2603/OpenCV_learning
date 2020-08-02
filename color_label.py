@@ -7,11 +7,7 @@ import argparse
 import imutils
 from scipy.spatial import distance as dist
 from collections import OrderedDict
-
-#create input option
-ap = argparse.ArgumentParser()
-ap.add_argument('-i', '--image', help='path to image')
-args = vars(ap.parse_args())
+from display import *
 
 def color_label (image): 
     # create color dictionary
@@ -24,18 +20,16 @@ def color_label (image):
         colorNames.append(name)
     lab = cv2.cvtColor(lab, cv2.COLOR_RGB2LAB)
 
-    i_img = cv2.imread(image)
-
     alpha = 1.3         # constrast : 1.0 -> 3.0
     beta = 0            # brightness : 0 -> 100
-    aj_img = cv2.convertScaleAbs(i_img, alpha = alpha, beta = beta)
+    aj_img = cv2.convertScaleAbs(image, alpha = alpha, beta = beta)
     gray_img = cv2.cvtColor(aj_img, cv2.COLOR_BGR2GRAY)
     blur_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
     thresh_img = cv2.threshold(blur_img, 100, 255, cv2.THRESH_BINARY)[1]
     cnts = cv2.findContours(thresh_img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
 
-    o_img = cv2.cvtColor(i_img, cv2.COLOR_BGR2LAB)
+    o_img = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
 
     for c in cnts:
         mask = np.zeros(o_img.shape[:2], dtype="uint8")
@@ -59,10 +53,17 @@ def color_label (image):
             cv2.putText(o_img, str(colorNames[minDist[1]]), (cX - 20, cY - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
     o_img = cv2.cvtColor(o_img, cv2.COLOR_LAB2BGR)
-    cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
-    cv2.imshow('window', np.hstack([i_img, o_img]))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    return o_img
+
+def run (image):
+    frame = cv2.imread(image)
+    o_frame = color_label(frame)
+    display([[frame, o_frame]])
 
 if __name__ == "__main__":
-    color_label(args['image'])
+    #create input option
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-i', '--image', help='path to image')
+    args = vars(ap.parse_args())
+
+    run(args['image'])
