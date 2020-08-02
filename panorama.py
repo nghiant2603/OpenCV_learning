@@ -10,7 +10,6 @@ import imutils
 from display import *
 from shape_position_corrector import *
 from shape_center_detector import *
-from remove_black_area import *
 
 def stitch(images, ratio=0.75, reprojThresh=4.0):
     # unpack the images, then detect keypoints and extract
@@ -35,6 +34,24 @@ def stitch(images, ratio=0.75, reprojThresh=4.0):
         print("ERROR : At least 2 Image as Input")
         exit()
 
+def remove_black_area (frame) : 
+
+    #frame = preprocess_image(frame)
+    thresh_b_img = cv2.threshold(frame[:,:,0], 10, 255, cv2.THRESH_BINARY)[1]
+    thresh_g_img = cv2.threshold(frame[:,:,1], 10, 255, cv2.THRESH_BINARY)[1]
+    thresh_r_img = cv2.threshold(frame[:,:,2], 10, 255, cv2.THRESH_BINARY)[1]
+    thresh_bg_img = cv2.bitwise_or(thresh_b_img, thresh_g_img)
+    thresh_img = cv2.bitwise_or(thresh_bg_img, thresh_r_img)
+    cnts = cv2.findContours(thresh_img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    c = imutils.grab_contours(cnts)[0]
+    left_edge = c[abs(c[:, 0, 0] - min(c[:, 0, 0])) < 3]
+    max_row = max(left_edge[:, 0, 1])
+    min_row = min(left_edge[:, 0, 1])
+    bot_edge = c[abs(c[:, 0, 1] - max_row) < 3]
+    top_edge = c[abs(c[:, 0, 1] - min_row) < 3]
+    max_col = min([max(bot_edge[:, 0, 0]), max(top_edge[:, 0, 0])]) 
+    o_frame = np.delete(frame, np.s_[max_col:frame.shape[1]:1], axis=1)
+    return o_frame
 def detectAndDescribe(image):
 
     # detect and extract features from the image
