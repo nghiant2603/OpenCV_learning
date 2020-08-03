@@ -41,4 +41,4 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument('-i', '--image', help='path to image')
     args = vars(ap.parse_args())
-    shape_center_detector(args['image'])
+    run(args['image'])
