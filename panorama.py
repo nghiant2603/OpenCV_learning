@@ -12,7 +12,7 @@ from shape_position_corrector import *
 from shape_center_detector import *
 
 def stitch(images, ratio=0.75, reprojThresh=4.0):
-    # unpack the images, then detect keypoints and extract
+    # unpack the imageS, then detect keypoints and extract
     # local invariant descriptors from them
     n_img = len(images)
     if n_img > 1 : 
