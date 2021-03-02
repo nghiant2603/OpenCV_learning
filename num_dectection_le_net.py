@@ -1,3 +1,4 @@
+# Update from VM
 from le_net.LeNet import LeNet
 from sklearn.model_selection import train_test_split
 from keras.datasets import mnist
