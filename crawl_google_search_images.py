@@ -3,6 +3,7 @@ import sys
 import time
 import argparse
 import math
+import secret_keys
 
 def crawl_google_search_images (pattern = None, num = 1000) : 
     if pattern is None : 
@@ -11,7 +12,7 @@ def crawl_google_search_images (pattern = None, num = 1000) :
 
     # you can provide API key and CX using arguments,
     # or you can set environment variables: GCS_DEVELOPER_KEY (API Key), GCS_CX (search engine ID)
-    gis = GoogleImagesSearch('AIzaSyC2hD-z3smSFp6No-WnHbR2z-7BbMNh-uA', 'd2203b045e07cb097')
+    gis = GoogleImagesSearch(secret_keys.API_KEY, secret_keys.CX_ID)
     
     # define search params:
     _search_params = {
@@ -37,13 +38,13 @@ def crawl_google_search_images (pattern = None, num = 1000) :
     s = time.time()
     for i in range(epoch) :
         print("[INFO] epoch : ", i)
-        if epoch == 1:
-            _search_params['num'] = num
-        else : 
-            if i == epoch - 1 : 
-                _search_params['num'] = num - i*100
-            else : 
-                _search_params['num'] = 100
+        ##TRIAL if epoch == 1:
+        ##TRIAL     _search_params['num'] = num
+        ##TRIAL else : 
+        ##TRIAL     if i == epoch - 1 : 
+        ##TRIAL         _search_params['num'] = num - i*100
+        ##TRIAL     else : 
+        ##TRIAL         _search_params['num'] = 100
         print ("NUM : ", _search_params['num'])
         tmp = time.time()
         gis.search(search_params=_search_params,
