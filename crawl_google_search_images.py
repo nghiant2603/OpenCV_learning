@@ -35,40 +35,23 @@ def crawl_google_search_images (pattern = None, num = 1000) :
     
     # this will search, download and resize:
     epoch = math.ceil(num/100.0)
-    s = time.time()
     for i in range(epoch) :
-        print("[INFO] epoch : ", i)
-        ##TRIAL if epoch == 1:
-        ##TRIAL     _search_params['num'] = num
-        ##TRIAL else : 
-        ##TRIAL     if i == epoch - 1 : 
-        ##TRIAL         _search_params['num'] = num - i*100
-        ##TRIAL     else : 
-        ##TRIAL         _search_params['num'] = 100
-        print ("NUM : ", _search_params['num'])
+        print("[INFO] Epoch : ", i)
         tmp = time.time()
         gis.search(search_params=_search_params,
                 path_to_dir='./google_images/{}'.format(pattern),
                 custom_image_name=pattern)
-        print("[INFO] Finish epoch : ", i, " - Time : ", time.time() - tmp)
+        print("\tFinish epoch : ", i, " - Time : ", time.time() - tmp)
     
     # search first, then download and resize afterwards:
     #gis.search(search_params=_search_params)
     #for image in gis.results():
     #    image.download('./google_images/')
     #    image.resize(500, 500)
-    
-    t = time.time() - s
-    print("[INFO] Running time : ", t)
-    return 1
 
 def run (pattern, num):
     print ("Getting {} images of {} ...".format(num, pattern))
     result = crawl_google_search_images (pattern, num) 
-    if result :
-        print ("SUCCESS...")
-    else : 
-        print ("FAIL...")
 
 if __name__ == "__main__":
     #create input option
