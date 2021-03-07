@@ -4,6 +4,7 @@ import time
 import argparse
 import math
 import secret_keys
+import os
 
 def crawl_google_search_images (pattern = None, num = 1000) : 
     if pattern is None : 
@@ -35,14 +36,25 @@ def crawl_google_search_images (pattern = None, num = 1000) :
     
     # this will search, download and resize:
     epoch = math.ceil(num/100.0)
+    output_dir = './google_images/{}'.format(pattern)
+
     for i in range(epoch) :
         print("[INFO] Epoch : ", i)
         tmp = time.time()
         gis.search(search_params=_search_params,
-                path_to_dir='./google_images/{}'.format(pattern),
+                path_to_dir = output_dir,
                 custom_image_name=pattern)
         print("\tFinish epoch : ", i, " - Time : ", time.time() - tmp)
-    
+
+    path, dirs, files = next(os.walk(output_dir)) 
+    while (len(files) < num) : 
+        print("Get more images...")
+        gis.search(search_params=_search_params,
+                path_to_dir = output_dir,
+                custom_image_name=pattern)
+        path, dirs, files = next(os.walk(output_dir)) 
+        time.sleep(50)
+
     # search first, then download and resize afterwards:
     #gis.search(search_params=_search_params)
     #for image in gis.results():
