@@ -5,4 +5,5 @@ __pycache__
 *google_images
 images
 *secret_keys*
-*/dataset/*
+*dataset*
+*output_images*
