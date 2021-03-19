@@ -2,8 +2,4 @@
 *.pyc
 __pycache__
 .vscode
-*google_images
-images
-*secret_keys*
-*dataset*
-*output_images*
+ng_*

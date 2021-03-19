@@ -19,7 +19,7 @@ from tensorflow.keras.utils import to_categorical
 import numpy as np
 import sklearn
 
-dataset = './dataset'
+dataset = './ng_dataset'
 data = []
 labels = []
 image_paths = sorted(list(paths.list_images(dataset)))

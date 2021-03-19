@@ -3,7 +3,7 @@ import sys
 import time
 import argparse
 import math
-import secret_keys
+import ng_secret_keys
 import os
 
 def crawl_google_search_images (pattern = None, num = 200, width = 500, height = 500) : 
