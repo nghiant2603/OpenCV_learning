@@ -2,5 +2,7 @@
 *.pyc
 __pycache__
 .vscode
-google_images
-secret_keys*
+*google_images
+images
+*secret_keys*
+*/dataset/*
