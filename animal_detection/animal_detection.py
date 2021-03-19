@@ -2,22 +2,21 @@
 # from tensorflow.keras.preprocessing.image import ImageDataGenerator
 # from tensorflow.keras.optimizers import Adam
 # from sklearn.preprocessing import LabelBinarizer
-# from sklearn.model_selection import train_test_split
 # from pyimagesearch.smallervggnet import SmallerVGGNet
 # import matplotlib.pyplot as plt
 # from imutils import paths
 # import argparse
 # import random
 # import pickle
-# import cv2
-# import os
+import os
 from imutils import paths
 import random
 import cv2
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.utils import to_categorical
 import numpy as np
-import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 dataset = './ng_dataset'
 data = []
@@ -37,8 +36,10 @@ for i, img in enumerate(image_paths) :
 
 data = np.array(data, dtype="float")/255.0
 labels = np.array(labels)
+
+label_encoder = LabelEncoder()
+labels = label_encoder.fit_transform(labels)
 labels = to_categorical(labels)
 
-(x_train, x_test, y_train, y_test) = sklearn.model_selection.train_test_split(data, labels,
-        test_size = 0.2, random_state = 42)
+(x_train, x_test, y_train, y_test) = train_test_split(data, labels, test_size = 0.2, random_state = 42)
 
