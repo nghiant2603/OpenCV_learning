@@ -827,7 +827,7 @@ class googleimagesdownload:
         if arguments['output_directory']:
             main_directory = arguments['output_directory']
         else:
-            main_directory = "output_images"
+            main_directory = "ng_output_images"
 
         # Proxy settings
         if arguments['proxy']:

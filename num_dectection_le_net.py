@@ -39,7 +39,7 @@ test_label = np_utils.to_categorical(test_label, 10)
 
 # Compile model
 opt = SGD(learning_rate=0.01)
-model = LeNet.build(1, 28, 28, 10, filter_num=[50, 20], filter_size=[5, 5], pooling_size=[(2,2), (2, 2)], node_num=[500], weights_path=args['weights'] if args['load_model']>0 else None)
+model = LeNet.build(1, 28, 28, 10, filter_num=[32, 32], filter_size=[5, 5], pooling_size=[(2,2), (2, 2)], node_num=[256], weights_path=args['weights'] if args['load_model']>0 else None)
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Load/Train model

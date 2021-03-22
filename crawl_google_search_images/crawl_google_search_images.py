@@ -3,7 +3,7 @@ import sys
 import time
 import argparse
 import math
-import ng_secret_keys
+from ng_secret_keys import *
 import os
 
 def crawl_google_search_images (pattern = None, num = 200, width = 500, height = 500) : 
@@ -20,7 +20,7 @@ def crawl_google_search_images (pattern = None, num = 200, width = 500, height =
 
         # you can provide API key and CX using arguments,
         # or you can set environment variables: GCS_DEVELOPER_KEY (API Key), GCS_CX (search engine ID)
-        gis = GoogleImagesSearch(secret_keys.API_KEY, secret_keys.CX_ID)
+        gis = GoogleImagesSearch(API_KEY, CX_ID)
     
         # define search params:
             #'imgSize': 'huge|icon|large|medium|small|xlarge|xxlarge',
@@ -35,7 +35,7 @@ def crawl_google_search_images (pattern = None, num = 200, width = 500, height =
             'rights': 'CC_PUBLICDOMAIN'
         }
         
-        output_dir = './output_images/{}'.format(p.replace(" ", "_"))
+        output_dir = './ng_output_images/{}'.format(p.replace(" ", "_"))
         #gis.search(search_params=_search_params,
         #        path_to_dir = output_dir,
         #        custom_image_name=p.replace(" ", "_"),
