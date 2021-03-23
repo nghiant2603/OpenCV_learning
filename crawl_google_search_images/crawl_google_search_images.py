@@ -6,7 +6,7 @@ import math
 from ng_secret_keys import *
 import os
 
-def crawl_google_search_images (pattern = None, num = 200, width = 500, height = 500) : 
+def crawl_google_search_images (pattern = None, num = 200, width = 500, height = 500, outdir="ng_output_images") : 
     if pattern is None : 
         print ("ERROR : No search pattern ")
         return 0
@@ -35,7 +35,7 @@ def crawl_google_search_images (pattern = None, num = 200, width = 500, height =
             'rights': 'CC_PUBLICDOMAIN'
         }
         
-        output_dir = './ng_output_images/{}'.format(p.replace(" ", "_"))
+        output_dir = outdir + str(os.path.sep) + p.replace(" ", "_")
         #gis.search(search_params=_search_params,
         #        path_to_dir = output_dir,
         #        custom_image_name=p.replace(" ", "_"),
@@ -53,15 +53,16 @@ def crawl_google_search_images (pattern = None, num = 200, width = 500, height =
             print("Unexpected error:", sys.exc_info()[0])
             pass
 
-def run (pattern, num, height, width):
-    result = crawl_google_search_images (pattern, num, height, width) 
+def run (pattern, num, height, width, outdir):
+    result = crawl_google_search_images (pattern, num, height, width, outdir) 
 
 if __name__ == "__main__":
     #create input option
     ap = argparse.ArgumentParser()
     ap.add_argument('-p', '--pattern', help='search pattern')
     ap.add_argument('-n', '--number', type=int, default=1000, help='the number of result images')
+    ap.add_argument('-o', '--output', default="ng_output_images", help='output directory')
     ap.add_argument('--height', type=int, default=100, help='the width of output image')
     ap.add_argument('--width', type=int, default=100, help='the height of output image')
     args = vars(ap.parse_args())
-    run(args['pattern'], args['number'], args['height'], args['width'])
+    run(args['pattern'], args['number'], args['height'], args['width'], args['output'])
