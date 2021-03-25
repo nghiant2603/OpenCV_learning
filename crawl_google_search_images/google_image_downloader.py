@@ -15,12 +15,12 @@ def crawl_google_images(pattern = None, output_dir = "ng_images", browser_driver
     else : 
         pattern_list = pattern.split(",")
         for j in pattern_list : 
-            seearch_query = j.strip()
+            site = 'https://www.google.com/search?tbm=isch&q=' + j.strip()
+
+            seearch_query = j.strip().replace(" ", "_")
             outdir = output_dir + os.path.sep + seearch_query
             if not os.path.exists(outdir):
                 os.makedirs(outdir)
-
-            site = 'https://www.google.com/search?tbm=isch&q=' + seearch_query
 
             #providing driver path
             options = Options()
@@ -61,7 +61,7 @@ def crawl_google_images(pattern = None, output_dir = "ng_images", browser_driver
                 try:
                     if n < limit : 
             		    #passing image urls one by one and downloading
-                        urllib.request.urlretrieve(i['src'], outdir + os.path.sep + pattern + str(n) + ".jpg")
+                        urllib.request.urlretrieve(i['src'], outdir + os.path.sep + seearch_query + str(n) + ".jpg")
                     else : 
                         break
                 except Exception as e:
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument('-p', '--pattern', help='search pattern')
     ap.add_argument('-o', '--output', default="ng_images", help='output directory')
-    ap.add_argument('-d', '--driver', default="ng_chromedriver.exe", help='chrome driver')
+    ap.add_argument('-d', '--driver', default="ng_chromedriver", help='chrome driver')
     ap.add_argument('-n', '--limit', type=int, default=1000, help='The number of downloaded images')
     args = vars(ap.parse_args())
     run(args['pattern'], args['output'], args['driver'], args['limit'])
