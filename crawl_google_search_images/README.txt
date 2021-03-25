@@ -1,1 +1,0 @@
-python crawl_google_search_images.py -p "cat, dog, bird" -n 100 --width 100 --height 100 -o "output_images"
