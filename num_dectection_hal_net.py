@@ -40,8 +40,7 @@ test_label = np_utils.to_categorical(test_label, 10)
 
 # Compile model
 opt = SGD(learning_rate=0.1)
-model = LeNet.build(1, 28, 28, 10, filter_num=[20], filter_size=[5], pooling_size=[(2,2)], node_num=[100], opt=opt, weights_path=args['weights'] if args['load_model']>0 else None)
-#model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
+model = HalNet.build_classification(1, 28, 28, 10, cov_filter_num=[20], cov_filter_size=[5], cov_pooling_size = [(2,2)], cov_activation = ['relu'], full_node_num = [100], full_activation = ['relu', 'softmax'], opt=opt, loss='categorical_crossentropy', weights_path=args['weights'] if args['load_model']>0 else None)
 
 # Load/Train model
 if args["load_model"] < 0 : 
