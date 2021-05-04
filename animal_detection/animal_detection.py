@@ -21,6 +21,10 @@ from le_net.LeNet import LeNet
 import argparse
 from keras.optimizers import SGD
 import time
+from numpy.random import seed
+seed(1)
+from tensorflow.random import set_seed
+set_seed(2)
 
 dataset = 'C:\\Users\\HP\\Documents\\200_DATABASE\\database\\animals_detection'
 data = []
@@ -60,7 +64,7 @@ args = vars(ap.parse_args())
 
 # Compile model
 opt = SGD(learning_rate=0.05)
-model = LeNet.build(3, 50, 50, 3, filter_num=[32, 32, 32], filter_size=[5, 5, 5], pooling_size=[(2,2), (2, 2), (2,2)], node_num=[16], weights_path=args['weights'] if args['load_model']>0 else None)
+model = LeNet.build(3, 50, 50, 3, filter_num=[32, 32, 32], filter_size=[5, 5, 5], pooling_size=[(2,2), (2,2), (2, 2)], node_num=[16], dropout = 0.5, batch_normalize = False, weights_path=args['weights'] if args['load_model']>0 else None)
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 model.summary()
 
@@ -68,12 +72,12 @@ model.summary()
 if args["load_model"] < 0 : 
 	print ("[INFO] Training model...")
 	s = time.time()
-	model.fit(train_data, train_label, batch_size=16, epochs=100, verbose=1)
+	model.fit(train_data, train_label, batch_size=16, epochs=100, verbose=1, validation_data=(test_data, test_label))
 	t = time.time() - s
 	print("[INFO] Training time : ", t)
 # Evaluate model
 print ("[INFO] Evaluate model...")
-(loss, accuracy) = model.evaluate(test_data, test_label, batch_size = 128, verbose = 1)
+(loss, accuracy) = model.evaluate(test_data, test_label, batch_size = 16, verbose = 1)
 print ("[INFO] Accuracy {:.2f}%".format(accuracy*100))
 
 # Save model

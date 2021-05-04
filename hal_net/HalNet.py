@@ -4,11 +4,12 @@ from keras.layers.convolutional import MaxPooling2D
 from keras.layers.core import Flatten
 from keras.layers.core import Dense
 from keras.layers.core import Activation
+from keras.optimizers import SGD
 from keras import backend as K
 
-class LeNet : 
+class HalNet : 
     @staticmethod
-    def build(img_channel, img_width, img_height, num_classes, filter_num=[32, 32], filter_size=[5, 5], pooling_size = [(2,2), (2,2)], node_num = [256], activation = 'relu', weights_path=None) :
+    def build(img_channel, img_width, img_height, num_classes, filter_num=[32, 32], filter_size=[5, 5], pooling_size = [(2,2), (2,2)], node_num = [256], activation = 'relu', opt=SGD(learning_rate=0.001), weights_path=None) :
         if K.image_data_format() == 'channels_first' : 
             input_shape = (img_channel, img_height, img_width)
         else : 
@@ -31,11 +32,16 @@ class LeNet :
 
         # Output layer
         model.add(Dense(num_classes))
-        model.add(Activation('softmax'))
+        if num_classes == 2 : 
+            model.add(Activation('sigmoid'))
+        else : 
+            model.add(Activation('softmax'))
 
         if weights_path is not None :
             print("[INFO] Loading model...")
             model.load_weights(weights_path)
 
         model.summary()
+        # Compile model
+        model.compile(optimizer=opt, loss='categorical_crossentropy' if (num_classes > 2) else 'binary_crossentropy', metrics=['accuracy'])
         return model

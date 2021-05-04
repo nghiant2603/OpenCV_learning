@@ -4,11 +4,13 @@ from keras.layers.convolutional import MaxPooling2D
 from keras.layers.core import Flatten
 from keras.layers.core import Dense
 from keras.layers.core import Activation
+from keras.layers import Dropout
+from keras.layers import BatchNormalization
 from keras import backend as K
 
 class LeNet : 
     @staticmethod
-    def build(img_channel, img_width, img_height, num_classes, filter_num=[32, 32], filter_size=[5, 5], pooling_size = [(2,2), (2,2)], node_num = [256], activation = 'relu', weights_path=None) :
+    def build(img_channel, img_width, img_height, num_classes, filter_num=[32, 32], filter_size=[5, 5], pooling_size = [(2,2), (2,2)], node_num = [256], activation = 'relu', weights_path=None, dropout = 0, batch_normalize = False) :
         if K.image_data_format() == 'channels_first' : 
             input_shape = (img_channel, img_height, img_width)
         else : 
@@ -20,6 +22,8 @@ class LeNet :
         for i in range(len(filter_num)):
             model.add(Conv2D(filter_num[i], filter_size[i], input_shape = input_shape, padding = 'same'))
             model.add(Activation(activation))
+            if batch_normalize : 
+                model.add(BatchNormalization())
             model.add(MaxPooling2D(pool_size=pooling_size[i], strides=pooling_size[i]))
 
         model.add(Flatten())
@@ -27,6 +31,8 @@ class LeNet :
         # Full Connected network
         for i in range(len(node_num)) : 
             model.add(Dense(node_num[i]))
+            if dropout != 0: 
+                model.add(Dropout(dropout, noise_shape=None, seed=None))
             model.add(Activation(activation))
 
         # Output layer

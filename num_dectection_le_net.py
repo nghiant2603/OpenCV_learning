@@ -1,5 +1,5 @@
 # Update from VM
-from le_net.LeNet import LeNet
+from hal_net.HalNet import HalNet
 from sklearn.model_selection import train_test_split
 from keras.datasets import mnist
 from keras.optimizers import SGD
@@ -9,6 +9,7 @@ import numpy as np
 import argparse
 import cv2
 import time
+import matplotlib.pyplot as plt
 
 # Construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -38,21 +39,34 @@ train_label = np_utils.to_categorical(train_label, 10)
 test_label = np_utils.to_categorical(test_label, 10)
 
 # Compile model
-opt = SGD(learning_rate=0.01)
-model = LeNet.build(1, 28, 28, 10, filter_num=[32, 32], filter_size=[5, 5], pooling_size=[(2,2), (2, 2)], node_num=[256], weights_path=args['weights'] if args['load_model']>0 else None)
-model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
+opt = SGD(learning_rate=0.1)
+model = LeNet.build(1, 28, 28, 10, filter_num=[20], filter_size=[5], pooling_size=[(2,2)], node_num=[100], opt=opt, weights_path=args['weights'] if args['load_model']>0 else None)
+#model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Load/Train model
 if args["load_model"] < 0 : 
 	print ("[INFO] Training model...")
 	s = time.time()
-	model.fit(train_data, train_label, batch_size=256, epochs=20, verbose=1)
+	his = model.fit(train_data, train_label, batch_size=500, epochs=10, verbose=1, validation_data=(test_data, test_label))
 	t = time.time() - s
 	print("[INFO] Training time : ", t)
-# Evaluate model
-print ("[INFO] Evaluate model...")
-(loss, accuracy) = model.evaluate(test_data, test_label, batch_size = 128, verbose = 1)
-print ("[INFO] Accuracy {:.2f}%".format(accuracy*100))
+	print(his.history.keys())
+	plt.subplot(1, 2, 1)
+	plt.plot(his.history['accuracy'])
+	plt.plot(his.history['val_accuracy'])
+	plt.legend(['accuracy', 'Val_accuracy'], loc='upper left')
+	plt.title('Model accuracy')
+	plt.xlabel('Epoch')
+	plt.ylabel('accuracy')
+	plt.subplot(1, 2, 2)
+	plt.plot(his.history['loss'])
+	plt.plot(his.history['loss'])
+	plt.plot(his.history['val_loss'])
+	plt.legend(['loss', 'Val_loss'], loc='upper left')
+	plt.title('Model loss')
+	plt.xlabel('Epoch')
+	plt.ylabel('loss')
+	plt.show()
 
 # Save model
 if args["save_model"] > 0:

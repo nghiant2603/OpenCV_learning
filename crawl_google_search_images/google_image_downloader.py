@@ -57,11 +57,13 @@ def crawl_google_images(pattern = None, output_dir = "ng_images", browser_driver
             img_tags = soup.find_all("img", class_="rg_i")
 
             print ("Downloading " + str(seearch_query) + " images...")
-            for n,i in enumerate(img_tags):
+            n = 0
+            for i in img_tags:
                 try:
                     if n < limit : 
             		    #passing image urls one by one and downloading
                         urllib.request.urlretrieve(i['src'], outdir + os.path.sep + seearch_query + str(n) + ".jpg")
+                        n += 1
                     else : 
                         break
                 except Exception as e:
