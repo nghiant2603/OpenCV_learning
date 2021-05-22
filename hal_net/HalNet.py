@@ -4,12 +4,32 @@ from keras.layers.convolutional import MaxPooling2D
 from keras.layers.core import Flatten
 from keras.layers.core import Dense
 from keras.layers.core import Activation
+from keras.layers import Dropout
 from keras.optimizers import SGD
 from keras import backend as K
 
 class HalNet : 
     @staticmethod
-    def build_classification(img_channel, img_width, img_height, class_num, cov_filter_num=[32, 32], cov_filter_size=[5, 5], cov_pooling_size = [(2,2), (2,2)], cov_activation = ['relu'], full_node_num = [256], full_activation = ['relu'], loss=None, opt=SGD(learning_rate=0.001), weights_path=None) :
+    def build_classification(img_channel, img_width, img_height, class_num, cov_filter_num=[32, 32], cov_filter_size=[5, 5], cov_activation = ['relu', 'relu'], cov_pooling_size = [(2,2), (2,2)], full_node_num = [256], full_activation = ['relu', 'softmax'], dropout=None, loss=None, opt=SGD(learning_rate=0.001), model_path=None) :
+        '''
+        Build the CNN classification model
+            >>> Cov -> Activation -> Pooling -> Cov -> Activation -> Pooling ...-> Full connected layer <<<   \
+            img_channel : image color channel   \
+            img_width : image width \
+            img_height : image height   \
+            class_num : num of class in result  \
+            cov_filter_num : list, num of filter in each covolution layer. Ex : [32, 32] --> 2 covolution layer,  32 filters/layer  \
+            cov_filter_size  : filter size in each covolution layer \
+            cov_activation : activation function in each covolution layer   \
+            cov_pooling_size : pooling size in each covolution layer    \
+            full_node_num : list, num of node in each full connected hidden layer. Ex : [128, 128] --> 2 hidden layer. 128nodes/layer   \
+            full_activation : activation function in each full connected layer.     \
+                Note : output layer activation may be included.     \
+            dropout : dropout ratio. Default is None    \
+            loss : loss function    \
+            opt : optimize function \
+            model_path : model result saving path 
+        '''
         if K.image_data_format() == 'channels_first' : 
             input_shape = (img_channel, img_height, img_width)
         else : 
@@ -18,6 +38,9 @@ class HalNet :
         model = Sequential()
 
         # Convolution Neural Network
+        if len(cov_filter_num) != len(cov_activation) : 
+            print("[HALNET ERROR] Length of cov_activation, cov_filter_num, cov_polling_size and cov_filter_size must be equal ")
+            return 0
         for i in range(len(cov_filter_num)):
             model.add(Conv2D(cov_filter_num[i], cov_filter_size[i], input_shape = input_shape, padding = 'same'))
             model.add(Activation(cov_activation[i]))
@@ -28,6 +51,8 @@ class HalNet :
         # Full Connected network
         for i in range(len(full_node_num)) : 
             model.add(Dense(full_node_num[i]))
+            if dropout is not None : 
+                model.add(Dropout(dropout[i]))
             model.add(Activation(full_activation[i]))
 
         # Output layer
@@ -40,9 +65,9 @@ class HalNet :
             else : 
                 model.add(Activation('softmax'))
 
-        if weights_path is not None :
+        if model_path is not None :
             print("[INFO] Loading model...")
-            model.load_weights(weights_path)
+            model.load_weights(model_path)
 
         model.summary()
 

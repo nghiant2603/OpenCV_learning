@@ -39,32 +39,41 @@ train_label = np_utils.to_categorical(train_label, 10)
 test_label = np_utils.to_categorical(test_label, 10)
 
 # Compile model
-opt = SGD(learning_rate=0.1)
-model = HalNet.build_classification(1, 28, 28, 10, cov_filter_num=[20], cov_filter_size=[5], cov_pooling_size = [(2,2)], cov_activation = ['relu'], full_node_num = [100], full_activation = ['relu', 'softmax'], opt=opt, loss='categorical_crossentropy', weights_path=args['weights'] if args['load_model']>0 else None)
+opt = SGD(learning_rate=0.05)
+model = {}
+model["Cov_20_20_full_500"] 			= HalNet.build_classification(1, 28, 28, 10, cov_filter_num=[20, 20], cov_filter_size=[5, 5], cov_pooling_size = [(2,2), (2,2)], cov_activation = ['relu', 		'relu'], 	full_node_num = [500], full_activation = ['relu', 		'softmax'], opt=opt, loss='categorical_crossentropy', weights_path=args['weights'] if args['load_model']>0 else None)
+model["Cov_20_20_full_500_dropout_0p1"] = HalNet.build_classification(1, 28, 28, 10, cov_filter_num=[20, 20], cov_filter_size=[5, 5], cov_pooling_size = [(2,2), (2,2)], cov_activation = ['relu', 		'relu'], 	full_node_num = [500], full_activation = ['relu', 		'softmax'], dropout=[0.1], opt=opt, loss='categorical_crossentropy', weights_path=args['weights'] if args['load_model']>0 else None)
+model["Cov_20_20_full_500_dropout_0p3"] = HalNet.build_classification(1, 28, 28, 10, cov_filter_num=[20, 20], cov_filter_size=[5, 5], cov_pooling_size = [(2,2), (2,2)], cov_activation = ['relu', 		'relu'], 	full_node_num = [500], full_activation = ['relu', 		'softmax'], dropout=[0.3], opt=opt, loss='categorical_crossentropy', weights_path=args['weights'] if args['load_model']>0 else None)
+model["Cov_20_20_full_500_dropout_0p5"] = HalNet.build_classification(1, 28, 28, 10, cov_filter_num=[20, 20], cov_filter_size=[5, 5], cov_pooling_size = [(2,2), (2,2)], cov_activation = ['relu', 		'relu'], 	full_node_num = [500], full_activation = ['relu', 		'softmax'], dropout=[0.5], opt=opt, loss='categorical_crossentropy', weights_path=args['weights'] if args['load_model']>0 else None)
+model["Cov_20_20_full_500_dropout_0p7"] = HalNet.build_classification(1, 28, 28, 10, cov_filter_num=[20, 20], cov_filter_size=[5, 5], cov_pooling_size = [(2,2), (2,2)], cov_activation = ['relu', 		'relu'], 	full_node_num = [500], full_activation = ['relu', 		'softmax'], dropout=[0.7], opt=opt, loss='categorical_crossentropy', weights_path=args['weights'] if args['load_model']>0 else None)
 
 # Load/Train model
 if args["load_model"] < 0 : 
 	print ("[INFO] Training model...")
-	s = time.time()
-	his = model.fit(train_data, train_label, batch_size=500, epochs=10, verbose=1, validation_data=(test_data, test_label))
-	t = time.time() - s
-	print("[INFO] Training time : ", t)
-	print(his.history.keys())
-	plt.subplot(1, 2, 1)
-	plt.plot(his.history['accuracy'])
-	plt.plot(his.history['val_accuracy'])
-	plt.legend(['accuracy', 'Val_accuracy'], loc='upper left')
-	plt.title('Model accuracy')
-	plt.xlabel('Epoch')
-	plt.ylabel('accuracy')
-	plt.subplot(1, 2, 2)
-	plt.plot(his.history['loss'])
-	plt.plot(his.history['loss'])
-	plt.plot(his.history['val_loss'])
-	plt.legend(['loss', 'Val_loss'], loc='upper left')
-	plt.title('Model loss')
-	plt.xlabel('Epoch')
-	plt.ylabel('loss')
+	his = {}	
+	i = 0
+	for k in model.keys() :
+		print ("[INFO] Training model {0}...".format(k))
+		t = time.time()
+		his[k] = model[k].fit(train_data[:5000], train_label[:5000], batch_size=500, epochs=100, verbose=2, validation_data=(test_data, test_label))
+		plt.subplot(len(model.keys()), 2, 2*i + 1)
+		plt.ylim(0,1)
+		plt.plot(his[k].history['accuracy'])
+		plt.plot(his[k].history['val_accuracy'])
+		plt.legend([k + '_accuracy', k + '_Val_accuracy'], loc='lower right')
+		if i == (len(model.keys()) - 1) : 
+			plt.xlabel('Epoch')
+			plt.ylabel('accuracy')
+		plt.subplot(len(model.keys()), 2, 2*i + 2)
+		plt.plot(his[k].history['loss'])
+		plt.plot(his[k].history['val_loss'])
+		plt.legend([k + '_loss', k + '_Val_loss'], loc='upper right')
+		if i == (len(model.keys()) - 1) : 
+			plt.xlabel('Epoch')
+			plt.ylabel('loss')
+		i += 1
+		running_time = time.time() - t
+		print("Running Time : {0}s".format(running_time))
 	plt.show()
 
 # Save model
