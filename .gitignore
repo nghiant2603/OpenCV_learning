@@ -4,3 +4,5 @@ __pycache__
 .vscode
 ng_*
 venv*
+*cifar10*
+*debug*
